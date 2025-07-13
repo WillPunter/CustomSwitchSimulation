@@ -23,11 +23,11 @@ static int read_node(node_t node) {
     return node->value;
 }
 
-void free_node(void *node) {
+void free_node(void *node, void *arg) {
     free(node);
 }
 
-comparison_t comparator(void *lhs, void *rhs) {
+comparison_t comparator(void *lhs, void *rhs, void *arg) {
     node_t node_l = (node_t) lhs;
     node_t node_r = (node_t) rhs; 
 

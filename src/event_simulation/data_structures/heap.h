@@ -20,9 +20,15 @@ enum comparator_val {
 
 typedef enum comparator_val comparison_t;
 
-typedef comparison_t (*func_comparator_t)(void *, void *);
+/*  A comparator function compares two elements and produces a comparison value
+    as an output. The first two parameters are the left and right elements
+    and the last represents a generic argument for any external state that may
+    be used in a comparison. */
+typedef comparison_t (*func_comparator_t)(void *, void *, void *);
 
-typedef void (*func_free_t)(void *);
+/*  A free function takes an element to free and an additional argument value
+    which may be NULL. */
+typedef void (*func_free_t)(void *, void *);
 
 binary_heap_t create_empty_heap(func_comparator_t comparator, func_free_t free_elem);
 void free_heap(binary_heap_t heap);
@@ -30,5 +36,7 @@ unsigned int binary_heap_size(binary_heap_t heap);
 int binary_heap_insert(binary_heap_t heap, void *elem);
 void * binary_heap_min(binary_heap_t heap);
 void * binary_heap_pop_min(binary_heap_t heap);
+void binary_heap_set_comparator_arg(binary_heap_t heap, void * arg);
+void binary_heap_set_free_arg(binary_heap_t heap, void * arg);
 
 #endif

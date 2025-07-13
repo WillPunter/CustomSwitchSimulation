@@ -62,6 +62,12 @@ struct binary_heap {
     /*  Free function that frees a single element. Used in the free_heap
         implementation. */
     func_free_t free_elem;
+
+    /*  Argument to comparator. Initially set to NULL. */
+    void * comparator_arg;
+
+    /*  Argument to free function. Initially set to NULL. */
+    void * free_arg;
 };
 
 /*  Heap API implementation. */
@@ -87,6 +93,8 @@ binary_heap_t create_empty_heap(func_comparator_t comparator, func_free_t free_e
     new_heap->capacity = DEFAULT_ARR_CAPACITY;
     new_heap->comparator = comparator;
     new_heap->free_elem = free_elem;
+    new_heap->comparator_arg = NULL;
+    new_heap->free_arg = NULL;
 
     return new_heap;
 };
@@ -106,7 +114,7 @@ void free_heap(binary_heap_t heap) {
     for (i = 0; i < heap->size; i++) {
         /*  Assert that element exists. */
         assert(heap->elems[i]);
-        heap->free_elem(heap->elems[i]);
+        heap->free_elem(heap->elems[i], heap->free_arg);
     }
 
     /*  Free underlying array. */
@@ -200,13 +208,21 @@ void * binary_heap_pop_min(binary_heap_t heap) {
         /*  Compare current and left child elements. */
         if (left_present) {
             left_compare =
-                heap->comparator(heap->elems[index], heap->elems[left_index]);
+                heap->comparator(
+                    heap->elems[index],
+                    heap->elems[left_index],
+                    heap->comparator_arg
+                );
         }
 
         /*  Compare current and right child elements. */
         if (right_present) {
             right_compare =
-                heap->comparator(heap->elems[index], heap->elems[right_index]);
+                heap->comparator(
+                    heap->elems[index],
+                    heap->elems[right_index],
+                    heap->comparator_arg
+                );
         }
 
         /*  Initialise swap flags to 0 - we swap the element and the given
@@ -224,7 +240,8 @@ void * binary_heap_pop_min(binary_heap_t heap) {
                 /*  Choose lesser of left and right to swap with. */
                 comparison_t child_compare = heap->comparator(
                     heap->elems[left_index],
-                    heap->elems[right_index]
+                    heap->elems[right_index],
+                    heap->comparator_arg
                 );
 
                 /*  Swap in direction of smaller child. */
@@ -278,6 +295,16 @@ void * binary_heap_pop_min(binary_heap_t heap) {
 
     return min_val;
 };
+
+/*  Set comparator argument. */
+void binary_heap_set_comparator_arg(binary_heap_t heap, void * arg) {
+    heap->comparator_arg = arg;
+}
+
+/*  Set free argument. */
+void binary_heap_set_free_arg(binary_heap_t heap, void * arg) {
+    heap->free_arg = arg;
+}
 
 /*  Helper functions. */
 
@@ -362,7 +389,8 @@ static void binary_heap_bubble_last_element(binary_heap_t heap) {
         elem_index != 0 &&
         heap->comparator(
             heap->elems[elem_index],
-            heap->elems[parent_index]
+            heap->elems[parent_index],
+            heap->comparator_arg
         ) == LESS_THAN
     ) {
         /*  Swap element and parent. */

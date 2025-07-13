@@ -1,3 +1,6 @@
+#ifndef TEST_H
+#define TEST_H
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -47,3 +50,5 @@ typedef enum test_result test_result_t;
     printf("Passed %d of %d tests.\n", passed, total); \
     return (passed == total) ? 0 : -1; \
 }
+
+#endif
