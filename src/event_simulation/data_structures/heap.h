@@ -26,6 +26,7 @@ typedef void (*func_free_t)(void *);
 
 binary_heap_t create_empty_heap(func_comparator_t comparator, func_free_t free_elem);
 void free_heap(binary_heap_t heap);
+unsigned int binary_heap_size(binary_heap_t heap);
 int binary_heap_insert(binary_heap_t heap, void *elem);
 void * binary_heap_min(binary_heap_t heap);
 void * binary_heap_pop_min(binary_heap_t heap);

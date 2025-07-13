@@ -15,6 +15,7 @@
 
 #include <assert.h>
 #include <stddef.h>
+#include <malloc.h>
 
 /*  Constant definitions. */
 #define DEFAULT_ARR_CAPACITY 16
@@ -115,6 +116,11 @@ void free_heap(binary_heap_t heap) {
     free(heap);
 };
 
+/*  Return the size field - hidden from outside the file. */
+unsigned int binary_heap_size(binary_heap_t heap) {
+    return heap->size;
+};
+
 /*  Inserting an element into a heap involves first adding the element to the
     next space in the existing complete binary tree (top to bottom, left to
     right) and then bubbling it up until it is in the correct place. This is
@@ -135,8 +141,8 @@ int binary_heap_insert(binary_heap_t heap, void *elem) {
     }
 
     /*  Insert new element at size + 1. */
-    heap->size = heap->size + 1;
     heap->elems[heap->size] = elem;
+    heap->size = heap->size + 1;
 
     /*  Bubble up to correct place. */
     binary_heap_bubble_last_element(heap);
@@ -269,6 +275,8 @@ void * binary_heap_pop_min(binary_heap_t heap) {
         left_index = binary_heap_get_left_child_index(index);
         right_index = binary_heap_get_right_child_index(index);
     }
+
+    return min_val;
 };
 
 /*  Helper functions. */
